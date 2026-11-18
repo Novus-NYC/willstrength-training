@@ -127,8 +127,10 @@ export function SiteHeader() {
               ))}
             </nav>
 
-            {/* Renders nothing until site.inquiry is set */}
-            <InquiryButton short className="btn-primary btn-compact hidden whitespace-nowrap xl:inline-flex" />
+            {/* Renders nothing until an inquiry channel is set. Shown from lg,
+                where every short label fits beside the nav; below md the
+                mobile menu carries it. */}
+            <InquiryButton short className="btn-primary btn-compact hidden whitespace-nowrap lg:inline-flex" />
 
             <button
               ref={toggleRef}
@@ -207,8 +209,10 @@ export function SiteHeader() {
           </ol>
         </nav>
 
+        {/* The inquiry link opens a mail or phone app or a new tab, never a
+            new page here, so focus goes back to the toggle when it closes. */}
         <div className="container-site shrink-0 pb-8 empty:hidden">
-          <InquiryButton className="btn-primary w-full" onClick={() => close(false)} />
+          <InquiryButton className="btn-primary w-full" onClick={() => close()} />
         </div>
       </div>
     </>

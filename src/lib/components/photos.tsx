@@ -16,7 +16,10 @@ export function CoachPortrait({ photo, priority = false }: { photo: SiteImage | 
         height={photo.height}
         alt={photo.alt}
         priority={priority}
-        sizes="(min-width: 1024px) 26rem, (min-width: 640px) 50vw, 90vw"
+        // Five of twelve columns from md (frame and container padding taken
+        // off), and the full content width below md. Recheck with the real
+        // portrait once it arrives.
+        sizes="(min-width: 1280px) 23rem, (min-width: 1024px) 26vw, (min-width: 768px) 33vw, calc(100vw - 3.75rem)"
         className="h-auto w-full"
       />
     </figure>
