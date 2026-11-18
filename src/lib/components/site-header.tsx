@@ -128,12 +128,12 @@ export function SiteHeader() {
             </nav>
 
             {/* Renders nothing until site.inquiry is set */}
-            <InquiryButton className="btn-primary btn-compact hidden lg:inline-flex" />
+            <InquiryButton short className="btn-primary btn-compact hidden whitespace-nowrap xl:inline-flex" />
 
             <button
               ref={toggleRef}
               type="button"
-              className="inline-flex h-11 w-11 items-center justify-center border-2 border-iron text-iron md:hidden"
+              className="menu-toggle inline-flex h-11 w-11 items-center justify-center border-2 border-iron text-iron md:hidden"
               style={{ borderRadius: 2 }}
               aria-expanded={open}
               aria-controls={PANEL_ID}
@@ -188,7 +188,9 @@ export function SiteHeader() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  onClick={() => close(false)}
+                  // Following a link moves focus to the new page. The current
+                  // page does not navigate, so focus goes back to the toggle.
+                  onClick={() => close(isCurrent(link.href))}
                   aria-current={isCurrent(link.href) ? "page" : undefined}
                   className="group flex min-h-[68px] items-baseline gap-5 border-b border-iron-line py-3"
                 >

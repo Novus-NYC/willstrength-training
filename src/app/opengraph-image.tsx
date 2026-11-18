@@ -85,20 +85,23 @@ export default async function OpenGraphImage() {
             <div
               style={{
                 position: "absolute",
-                left: -40,
-                right: -64,
+                left: -14,
+                right: -40,
                 top: 70,
                 height: 10,
                 background: brandColors.iron,
               }}
             />
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginRight: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginRight: 10 }}>
               <Plate width={26} color={brandColors.blue} />
               <Plate width={34} color={brandColors.red} />
               <Collar />
             </div>
-            <div style={{ display: "flex", fontSize: 128, lineHeight: 1, letterSpacing: -2 }}>STRENGTH</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 14 }}>
+            {/* Chalk behind the word so the bar stops at its edges, as on the site */}
+            <div style={{ display: "flex", fontSize: 120, lineHeight: 1, letterSpacing: -2, padding: "0 12px", background: brandColors.chalk }}>
+              STRENGTH
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 10 }}>
               <Collar />
               <Plate width={34} color={brandColors.red} />
               <Plate width={26} color={brandColors.blue} />

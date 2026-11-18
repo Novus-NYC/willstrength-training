@@ -4,6 +4,8 @@ import { inquiryLink } from "@/lib/site";
 type InquiryButtonProps = {
   className?: string;
   onClick?: () => void;
+  /** Use the shorter header label */
+  short?: boolean;
 };
 
 function NewTabArrow() {
@@ -18,14 +20,15 @@ function NewTabArrow() {
  * The inquiry button, built from `site.inquiry`. Renders nothing while no
  * channel is set, so there is never a dead button on the page.
  */
-export function InquiryButton({ className = "btn-primary", onClick }: InquiryButtonProps) {
+export function InquiryButton({ className = "btn-primary", onClick, short = false }: InquiryButtonProps) {
   const link = inquiryLink();
   if (!link) return null;
+  const label = short ? link.shortLabel : link.label;
 
   if (link.external) {
     return (
       <a href={link.href} target="_blank" rel="noreferrer" className={className} onClick={onClick}>
-        {link.label}
+        {label}
         <span className="sr-only"> (opens in a new tab)</span>
         <NewTabArrow />
       </a>
@@ -34,7 +37,7 @@ export function InquiryButton({ className = "btn-primary", onClick }: InquiryBut
 
   return (
     <a href={link.href} className={className} onClick={onClick}>
-      {link.label}
+      {label}
     </a>
   );
 }

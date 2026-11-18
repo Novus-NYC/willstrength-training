@@ -224,6 +224,12 @@ button:focus-visible,
   transform: scaleX(1);
 }
 
+/* Without JavaScript the menu cannot open, so its button is hidden. The
+   footer still links every page. */
+html:not(.js) .menu-toggle {
+  display: none;
+}
+
 /* Body scroll lock while the mobile menu is open */
 body.menu-open {
   overflow: hidden;
@@ -332,6 +338,16 @@ body.menu-open {
   flex: 1;
   height: 1px;
   background: var(--iron);
+}
+
+/* A heading that holds the full name on one line, sized to its column */
+.fit-box {
+  container-type: inline-size;
+}
+
+.fit-name {
+  font-size: min(4.25rem, 8.4cqw);
+  line-height: 0.95;
 }
 
 /* ------------------------------------------------------------------

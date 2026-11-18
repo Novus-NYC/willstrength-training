@@ -81,12 +81,12 @@ export function Footer() {
               ) : null}
             </ul>
           ) : (
-            <p className="mt-3 text-steel">
-              Inquiries open soon.{" "}
-              <Link href="/contact" className="text-chalk underline decoration-plate-red-bright decoration-2 underline-offset-4 hover:text-plate-red-bright">
-                Contact page
+            <>
+              <p className="mt-3 text-steel">Inquiries open soon.</p>
+              <Link href="/contact" className="text-link">
+                See the Contact page
               </Link>
-            </p>
+            </>
           )}
         </div>
       </div>

@@ -10,10 +10,12 @@ type ServiceLogProps = {
 
 const COLUMNS = "md:grid-cols-[3rem_minmax(0,1fr)_minmax(0,24rem)]";
 
-const FIELDS: { key: "format" | "duration" | "price"; label: string }[] = [
-  { key: "format", label: "Format" },
-  { key: "duration", label: "Length" },
-  { key: "price", label: "Price" },
+/** Each field keeps its own column on wide screens, even when an earlier
+    field is empty (static class names so Tailwind can see them). */
+const FIELDS: { key: "format" | "duration" | "price"; label: string; column: string }[] = [
+  { key: "format", label: "Format", column: "sm:col-start-1" },
+  { key: "duration", label: "Length", column: "sm:col-start-2" },
+  { key: "price", label: "Price", column: "sm:col-start-3" },
 ];
 
 /**
@@ -53,9 +55,9 @@ export function ServiceLog({ services, headingLevel: Heading = "h3" }: ServiceLo
               <dl className="grid gap-x-6 gap-y-1 sm:grid-cols-3">
                 {FIELDS.map((field) => {
                   const value = service[field.key];
-                  if (!value) return <div key={field.key} className="hidden sm:block" aria-hidden="true" />;
+                  if (!value) return null;
                   return (
-                    <div key={field.key} className="flex gap-3 sm:block">
+                    <div key={field.key} className={`flex gap-3 sm:row-start-1 sm:block ${field.column}`}>
                       <dt className="label pt-1 text-graphite md:sr-only">{field.label}</dt>
                       <dd className="font-semibold">{value}</dd>
                     </div>

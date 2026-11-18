@@ -10,19 +10,19 @@ import { site } from "@/lib/site";
 
 export const metadata = pageMetadata({
   title: "Services",
-  description: `Strength training sessions with ${site.name}: each session option with its format, length and price.`,
+  description: `Strength training sessions with ${site.name}: the session options, written up one per line.`,
   path: "/services",
 });
 
-/** The log's column heads, printed across the top of the page */
-const HEADS = ["Session", "Format", "Length", "Price"];
+/** Entry numbers down the margin of the blank log page in the intro */
+const BLANK_ROWS = [1, 2, 3, 4, 5];
 
 export default function ServicesPage() {
   const { services, hours } = site;
 
   return (
     <>
-      {/* Intro: the title, then the log's column heads printed across the page */}
+      {/* Intro: the title beside a blank log page, numbered and ruled */}
       <section aria-labelledby="services-heading" className="border-b-2 border-iron">
         <div className="container-site log-grid">
           <div className="pt-12 md:pt-16 lg:pr-6 lg:pt-[4.75rem]">
@@ -31,26 +31,30 @@ export default function ServicesPage() {
               Services
             </p>
           </div>
-          <div className="log-content pb-14 pt-5 md:pb-20 lg:pt-16">
-            <h1 id="services-heading" className="rise display text-display-xl">
-              Training sessions
-            </h1>
-            <p className="rise measure-narrow mt-6 text-lead" style={{ "--rise-delay": "120ms" } as CSSProperties}>
-              Every session option at {site.name}, one per line: what it is, how it runs, how long it takes and what it
-              costs.
-            </p>
-            {/* The printed header line of a log page. Decorative: the real
-                labels sit with each entry below. */}
+          <div className="log-content grid gap-10 pb-14 pt-5 md:grid-cols-12 md:items-end md:pb-20 lg:pt-16">
+            <div className="md:col-span-7">
+              <h1 id="services-heading" className="rise display text-display-lg">
+                Training sessions
+              </h1>
+              <p className="rise measure-narrow mt-6 text-lead" style={{ "--rise-delay": "120ms" } as CSSProperties}>
+                Every session option at {site.name}, written up one per line.
+              </p>
+            </div>
+            {/* Decorative: a blank log page with numbered, ruled lines and a
+                red margin. It names no columns, so it promises nothing. */}
             <div
               aria-hidden="true"
-              className="label mt-10 grid grid-cols-2 gap-px border-y-2 border-iron bg-plate-rule sm:grid-cols-4"
+              className="hidden border-2 border-iron bg-chalk-bright md:col-span-5 md:block"
             >
-              {HEADS.map((head, index) => (
-                <span key={head} className="flex items-center gap-3 bg-chalk-bright px-4 py-3">
-                  <span className="text-plate-blue">{index + 1}</span>
-                  {head}
-                </span>
-              ))}
+              <div className="h-4 border-b-2 border-iron bg-iron" />
+              <ol className="label text-plate-blue">
+                {BLANK_ROWS.map((row) => (
+                  <li key={row} className="grid h-12 grid-cols-[3rem_minmax(0,1fr)] border-b border-plate-rule last:border-b-0">
+                    <span className="flex items-center justify-center border-r-2 border-plate-red">{row}</span>
+                    <span />
+                  </li>
+                ))}
+              </ol>
             </div>
           </div>
         </div>
@@ -65,7 +69,7 @@ export default function ServicesPage() {
         ) : (
           <Reveal>
             <ComingSoon title="Session options are being finalized." as="h3">
-              <p>Each option will be listed here with its format, length and price as soon as it is confirmed.</p>
+              <p>Each option will be listed here as soon as it is confirmed.</p>
             </ComingSoon>
           </Reveal>
         )}

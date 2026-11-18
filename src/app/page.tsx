@@ -12,7 +12,7 @@ import { category, site, whereLine } from "@/lib/site";
 
 export const metadata = pageMetadata({
   title: `${site.name} | ${category}`,
-  description: `${site.name} offers strength training sessions. See the session options, read about the coach and find out how to ask about a session.`,
+  description: `${site.name} offers strength training sessions. See the session options, read about the business and find out how to ask about a session.`,
   path: "/",
   absoluteTitle: true,
 });
@@ -20,7 +20,7 @@ export const metadata = pageMetadata({
 /** The contents page of the log: where each part of the site lives */
 const CONTENTS = [
   { href: "/about", page: "About", note: `The person behind ${site.name}.` },
-  { href: "/services", page: "Services", note: "Session options: format, length and price." },
+  { href: "/services", page: "Services", note: "The session options, one per line." },
   { href: "/contact", page: "Contact", note: "How to ask about a session." },
 ];
 

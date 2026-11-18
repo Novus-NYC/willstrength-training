@@ -105,7 +105,11 @@ export type SiteConfig = {
   owner: Owner;
   /** Where sessions happen. Null until the owner confirms. */
   location: Location | null;
-  /** Area served, for mobile or online training, in the owner's words */
+  /**
+   * Area served, for mobile or online training. Write a place name that
+   * reads after "in" ("{area} and {area}"). For online-only training,
+   * leave it null and say so in the service summaries instead.
+   */
   serviceArea: string | null;
   services: Service[];
   contact: {
@@ -161,12 +165,21 @@ export const site: SiteConfig = {
    Derived values (pages read these, they do not retype facts)
    ------------------------------------------------------------------ */
 
+/**
+ * True until the two launch-blocking facts are in: a way to ask about
+ * sessions and the owner's name. While true, robots.txt asks search engines
+ * not to crawl the site, in case it is deployed early by mistake.
+ */
+export const isScaffold = site.inquiry === null || site.owner.name === null;
+
 /** What the business does, in the only words the brief supports */
 export const category = "Strength training sessions";
 
 export type InquiryLink = {
   /** Button label, action-specific */
   label: string;
+  /** Shorter label for the header, where space is tight */
+  shortLabel: string;
   href: string;
   /** Opens in a new tab (Instagram, booking pages) */
   external: boolean;
@@ -183,6 +196,7 @@ export function inquiryLink(inquiry: Inquiry | null = site.inquiry): InquiryLink
     case "email":
       return {
         label: "Email to ask about a session",
+        shortLabel: "Email to ask",
         href: `mailto:${inquiry.address}?subject=${encodeURIComponent(`Session inquiry for ${site.name}`)}`,
         external: false,
         heading: "Ask by email.",
@@ -191,6 +205,7 @@ export function inquiryLink(inquiry: Inquiry | null = site.inquiry): InquiryLink
     case "phone":
       return {
         label: "Call to ask about a session",
+        shortLabel: "Call to ask",
         href: `tel:${inquiry.phone.e164}`,
         external: false,
         heading: "Ask by phone.",
@@ -199,6 +214,7 @@ export function inquiryLink(inquiry: Inquiry | null = site.inquiry): InquiryLink
     case "instagram":
       return {
         label: "Message on Instagram",
+        shortLabel: "Message on Instagram",
         href: inquiry.instagram.url,
         external: true,
         heading: "Message on Instagram.",
@@ -207,6 +223,7 @@ export function inquiryLink(inquiry: Inquiry | null = site.inquiry): InquiryLink
     case "booking":
       return {
         label: "Book a session",
+        shortLabel: "Book a session",
         href: inquiry.url,
         external: true,
         heading: "Book online.",

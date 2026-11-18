@@ -10,7 +10,7 @@ import { site, whereLine, wherePhrase } from "@/lib/site";
 
 export const metadata = pageMetadata({
   title: "About",
-  description: `About ${site.name}, a strength training business: who runs the sessions and where they happen.`,
+  description: `About ${site.name}, a business offering strength training sessions.`,
   path: "/about",
 });
 
@@ -33,9 +33,11 @@ export default function AboutPage() {
             </p>
           </div>
           <div className="log-content grid gap-10 pb-14 pt-5 md:grid-cols-12 md:items-center md:pb-20 lg:pt-16">
-            <div className="rise md:col-span-7">
-              <h1 id="about-heading" className="display text-display-lg">
-                About Will&shy;strength
+            <div className="fit-box rise md:col-span-7">
+              {/* The name never breaks: it is sized to its column instead */}
+              <h1 id="about-heading" className="display fit-name">
+                <span className="block">About</span>{" "}
+                <span className="block whitespace-nowrap">Willstrength</span>
               </h1>
               <p className="measure-narrow mt-6 text-lead">
                 {site.name} offers strength training sessions

@@ -5,7 +5,6 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = {
   title: `Page not found | ${site.name}`,
   description: `That page is not on the ${site.name} site. Head back to the home page, the session options or the Contact page.`,
-  robots: { index: false, follow: false },
 };
 
 /**
