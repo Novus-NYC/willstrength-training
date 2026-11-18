@@ -37,6 +37,6 @@ npm run typecheck  # tsc --noEmit
 |---|---|
 | `NEXT_PUBLIC_SITE_URL` | Public origin, for example `https://www.example.com`, used for canonical URLs, Open Graph URLs and the sitemap. If it is unset, the site falls back to Vercel's `VERCEL_PROJECT_PRODUCTION_URL`, then to `http://localhost:3000`. |
 
-`robots.txt` blocks all crawling while `site.inquiry` or `site.owner.name` is still null.
+While there is no inquiry channel (`site.inquiry` or a contact detail) or `site.owner.name` is still null, every page sends `noindex, nofollow`. `robots.txt` allows crawling so search engines can read that noindex, and only lists the sitemap once both are set.
 
 Build standard: `AGENTS.md` and `CLAUDE.md` (identical).

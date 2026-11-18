@@ -2,16 +2,19 @@
 
 The site is built and styled, but almost every business detail is still empty. Nothing below could be confirmed online, so none of it is on the site yet. Each item names the field in `src/lib/site.ts` where it goes. Once a field is filled in, the matching part of the site appears on its own.
 
-**The site should not go live until at least items 1 and 2 are filled in.**
+**The site should not go live until at least items 1 and 2 are filled in.** Until then every page tells search engines not to list it.
 
 ## Must have before launch
 
 1. **How people should ask about sessions** (the inquiry button). Pick one: an email address, a phone number, an Instagram account, or a booking link (Calendly, Acuity and so on).
-   Goes in: `site.inquiry`, for example `{ method: "email", address: "..." }`. This one edit turns on the button in the header, the home page, the closing section of every page and the Contact page.
+   Goes in: `site.inquiry`, for example `{ method: "email", address: "..." }`. This one edit turns on the inquiry button everywhere it appears: in the header on screens 1024 px and wider, in the menu on phone-sized screens, in the home page's opening section, in the closing section of Home, About and Services, on the Contact page and in the footer.
+   If `site.inquiry` is left empty, the first contact detail filled in below takes its place (booking link, then email, then phone, then Instagram), so the site never says "inquiries open soon" next to a working phone number or email.
 2. **Who runs the sessions**: full name as it should appear, and the word they use for themselves (coach, trainer, founder).
-   Goes in: `site.owner.name`, `site.owner.role`.
+   Goes in: `site.owner.name`, `site.owner.role`. The role also becomes the section label ("The trainer"); until it is set, the label reads "The coach".
 
 ## Contact details
+
+Each detail below is listed on the Contact page and in the footer. The one used as the inquiry button (item 1) is not repeated in the Contact page's list.
 
 3. Phone number (as it should be shown, plus the international form for tap-to-call). Goes in: `site.contact.phone`.
 4. Email address. Goes in: `site.contact.email`.
@@ -29,7 +32,7 @@ The site is built and styled, but almost every business detail is still empty. N
 
 ## Sessions
 
-13. The list of session options. For each: name, a one or two sentence description, format (in person, online, small group), length, and price as it should be shown (or leave price out). Goes in: `site.services`.
+13. The list of session options. For each: name, a one or two sentence description, format (in person, online, small group), length, and price as it should be shown (or leave price out). A field left out of every session gets no column. Goes in: `site.services`.
 
 ## Photos and brand
 
@@ -40,4 +43,4 @@ The site is built and styled, but almost every business detail is still empty. N
 ## Launch details
 
 17. The domain name for the site. Set it as `NEXT_PUBLIC_SITE_URL` on the host.
-18. Confirm the general line "Strength training sessions" describes the business correctly. It is the only description used on the site. Goes in: `category` in `src/lib/site.ts`.
+18. Confirm the general line "Strength training sessions" describes the business correctly. It is the only description used on the site, including the About introduction and every page's search and share description. Goes in: `category` in `src/lib/site.ts`.

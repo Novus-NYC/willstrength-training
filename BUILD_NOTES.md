@@ -1,7 +1,7 @@
 # Willstrength Training: build notes
 
 > **This site is a scaffold. Do not deploy it publicly until the owner's details are in.**
-> The design, pages and code are finished, but the only verified facts are the business name and that it offers training sessions. Every other detail is `null` or empty in `src/lib/site.ts` and hidden in the UI. While `site.inquiry` or `site.owner.name` is null, `robots.txt` disallows all crawling as a safety net. The full list of what the owner must send is in `OWNER-CHECKLIST.md` and repeated under "Open items" below.
+> The design, pages and code are finished, but the only verified facts are the business name and that it offers training sessions. Every other detail is `null` or empty in `src/lib/site.ts` and hidden in the UI. While there is no inquiry channel (`site.inquiry` or a contact detail) or `site.owner.name` is null, every page sends `noindex, nofollow` as a safety net. The full list of what the owner must send is in `OWNER-CHECKLIST.md` and repeated under "Open items" below.
 
 ## Art direction
 
@@ -47,27 +47,32 @@ That is all. The only description on the site is "Strength training sessions", i
   - Content model as specified.
   - The inquiry button is driven by a single `inquiry` config. While it is null, Contact shows "Inquiries open soon" and the header CTA is hidden.
   - Routes `/`, `/about`, `/services`, `/contact`.
-- **Inquiry button.** `site.inquiry` is a union: email, phone, Instagram or booking URL. Setting it once turns on:
-  - the header CTA, from 1280 px, with a short label;
+- **Inquiry button.** `site.inquiry` is a union: email, phone, Instagram or booking URL. Every part of the site reads one derived channel, `activeInquiry`: `site.inquiry` when it is set, otherwise the first contact detail filled in (booking link, then email, then phone, then Instagram). This keeps the single config the lead asked for, and it means filling only `site.contact` (as the checklist's contact items say) can never leave "Inquiries open soon" above a working phone or email. Setting a channel turns on:
+  - the header CTA, from 1024 px, with a short label, and the button at the foot of the mobile menu below 768 px (768 to 1023 px has the desktop nav and no CTA, because the labels do not fit beside it);
   - the hero primary action;
   - the closing ask band on Home, About and Services;
-  - the Contact page button;
+  - the Contact page status and button (the details list below it skips the row that would repeat the channel);
   - the footer button.
 
-  Until then the hero's primary action is an honest "How to ask about a session" link to Contact. It is never a dead button.
+  Until then the hero's primary action is an honest "How to ask about a session" link to Contact. It is never a dead button. Choosing the inquiry button in the mobile menu closes the menu and returns focus to the toggle, since it opens a mail or phone app or a new tab rather than a new page.
 - **Empty states.** Sections with no data render nothing, except where a page would be empty:
   - About shows "Coach profile coming soon."
   - Services shows "Session options are being finalized."
   - Contact shows "Inquiries open soon."
+
+  Copy never promises content that is not there. While `site.services` is empty, the Services intro and meta description are in the future tense, the Home contents note reads "Session options, once confirmed.", and the hero's "See session options" button and Contact's "See session options" link are not rendered. The 404 button says "Services". The ask band and footer say only that inquiries open soon.
+- **Service log columns.** Format, Length and Price each get a column only when at least one session fills them, so leaving prices out never shows an empty Price column.
+- **Owner label and description.** The coach section label comes from `site.owner.role` ("The trainer"), falling back to "The coach". The About introduction and every route's meta description use `category` (or its lowercase `categoryPhrase`), so correcting the category in `site.ts` updates them all.
 - **Photo slots.** These render nothing while empty:
   - the coach portrait (About intro, Home coach preview);
   - the session photos (Home and Services).
 
   Both use `next/image` and are capped at the photo's natural width.
-- **Search engines.** `robots.ts` disallows all crawling while `isScaffold` is true (no inquiry channel or no owner name). Once both are set it allows crawling and lists the sitemap whenever a public URL is configured.
+- **Search engines.** While `isScaffold` is true (no inquiry channel or no owner name), `pageMetadata()` adds `noindex, nofollow` to every route (the 404 already gets noindex from Next.js). `robots.txt` allows crawling in that state on purpose: a Disallow stops crawling but not indexing, and a crawler can only obey a noindex it is allowed to fetch. Once both facts are set the noindex goes away, and `robots.txt` also lists the sitemap whenever a public URL is configured.
 - **Site URL.** The URL comes from `NEXT_PUBLIC_SITE_URL`, then `https://${VERCEL_PROJECT_PRODUCTION_URL}`, then `http://localhost:3000`.
 - **Redirects.** None. No old site exists.
-- **Tested with sample data.** The filled state was checked by temporarily putting obviously fake sample data in `site.ts`, at 1440, 1280, 1024, 768, 390 and 360 px. The sample data was never committed. Checked: owner, location, services, hours, phone, a long email, and email and Instagram inquiries. There was no overflow, and the header CTA fits at 1280 px.
+- **Tested with sample data.** The filled state was checked by temporarily putting obviously fake sample data in `site.ts`, at 1440, 1280, 1024, 768, 390 and 360 px. The sample data was never committed. Checked: owner, location, services, hours, phone, a long email, and email and Instagram inquiries. There was no overflow. A later review measured the header at 1024 px: every short CTA label fits beside the nav (the longest, "Message on Instagram", leaves 39 px), so the CTA now shows from 1024 px instead of 1280 px.
+- **Intro layouts between 768 and 1279 px.** The Home value line and actions stay stacked below 1280 px, so "Strength training sessions." stays on one line. The Services and About intros are top-aligned below 1024 px, where the page label sits above the title, so there is no gap between label and title.
 - **Fresh review.** A fresh review agent checked the site against AGENTS.md. It found six real defects, and all six are fixed:
   - the Open Graph bar struck through the name;
   - the header CTA wrapped;
@@ -124,8 +129,8 @@ None. No image could be confirmed as this business, and the lead decisions exclu
 Everything below is unknown. Each item names the field in `src/lib/site.ts`; the same list, with more detail, is in `OWNER-CHECKLIST.md`.
 
 **Blocking launch**
-1. How people should ask about sessions: email, phone, Instagram or a booking link. Field: `site.inquiry`.
-2. The owner's name and role (coach, trainer, founder). Field: `site.owner.name`, `site.owner.role`.
+1. How people should ask about sessions: email, phone, Instagram or a booking link. Field: `site.inquiry` (if it stays empty, the first contact detail filled in is used).
+2. The owner's name and role (coach, trainer, founder). Field: `site.owner.name`, `site.owner.role` (the role also sets the section label).
 
 **Contact**
 
