@@ -42,7 +42,15 @@ export function Wordmark({ tone = "light", size = "header" }: WordmarkProps) {
     <span className="flex items-center gap-3">
       <BrandMark className={big ? "h-14 w-14 shrink-0" : "h-10 w-10 shrink-0"} />
       <span className="flex flex-col">
-        <span className={`display whitespace-nowrap leading-none ${big ? "text-[1.4375rem] sm:text-[1.75rem]" : "text-[1.1875rem] sm:text-[1.3125rem]"}`}>
+        {/* The name never wraps, so it steps down a size below 360 px to fit
+            320 px phones (WCAG reflow) beside the menu button. */}
+        <span
+          className={`display whitespace-nowrap leading-none ${
+            big
+              ? "text-[1.4375rem] max-[359px]:text-[1.1875rem] sm:text-[1.75rem]"
+              : "text-[1.1875rem] max-[359px]:text-[1rem] sm:text-[1.3125rem]"
+          }`}
+        >
           Willstrength
         </span>
         <span
