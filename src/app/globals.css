@@ -2,11 +2,520 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  padding: 0;
-  margin: 0;
+/* ------------------------------------------------------------------
+   Tokens (declared on :root only, so nothing loses to an html {} rule)
+   ------------------------------------------------------------------ */
+:root {
+  --header-h: 4rem;
+  --chalk: #f4f2ed;
+  --chalk-bright: #fbfaf7;
+  --chalk-line: #cdc8be;
+  --iron: #15171a;
+  --iron-line: #3a4047;
+  --graphite: #4e535a;
+  --steel: #a7aeb6;
+  --red: #b8261f;
+  --red-bright: #f06a5f;
+  --blue: #1e4fa3;
+  --rule: #c5d2e8;
+  /* Spacing of the ruled lines on log pages */
+  --rule-gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --header-h: 4.5rem;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Base
+   ------------------------------------------------------------------ */
+html {
+  /* The single anchor offset. No per-section scroll-margin anywhere. */
+  scroll-padding-top: var(--header-h);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  @apply bg-chalk font-sans text-iron antialiased;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  font-stretch: 100%;
 }
 
 * {
   box-sizing: border-box;
+}
+
+::selection {
+  background: var(--red);
+  color: var(--chalk-bright);
+}
+
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--iron);
+  outline-offset: 3px;
+}
+
+.on-dark a:focus-visible,
+.on-dark button:focus-visible,
+.on-dark [tabindex]:focus-visible {
+  outline-color: var(--chalk);
+}
+
+/* ------------------------------------------------------------------
+   Type and layout primitives
+   ------------------------------------------------------------------ */
+@layer components {
+  .container-site {
+    @apply mx-auto w-full max-w-site px-5 sm:px-8 lg:px-10;
+  }
+
+  /* Expanded black capitals: the plate lettering. Headlines and numerals. */
+  .display {
+    @apply font-sans font-black uppercase;
+    font-stretch: 125%;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  /* Log-book labels: column headers, entry numbers, eyebrows */
+  .label {
+    @apply font-mono text-sm font-medium uppercase leading-tight tracking-label;
+  }
+
+  .measure {
+    max-width: 62ch;
+  }
+
+  .measure-narrow {
+    max-width: 44ch;
+  }
+
+  .btn {
+    @apply inline-flex min-h-[48px] items-center justify-center gap-3 border-2 px-5 py-2 text-[1.0625rem] font-bold leading-tight tracking-button transition-colors duration-200 ease-out;
+    border-radius: 2px;
+    font-stretch: 112%;
+  }
+
+  /* Plate red: the one action colour */
+  .btn-primary {
+    @apply btn border-plate-red bg-plate-red text-chalk-bright hover:border-plate-red-deep hover:bg-plate-red-deep;
+  }
+
+  .btn-secondary {
+    @apply btn border-iron bg-transparent text-iron hover:bg-iron hover:text-chalk;
+  }
+
+  .on-dark .btn-secondary {
+    @apply border-chalk text-chalk hover:bg-chalk hover:text-iron;
+  }
+
+  .btn-compact {
+    @apply min-h-[44px] px-4 text-base;
+  }
+
+  /* Standalone text links keep a 44 px target */
+  .text-link {
+    @apply inline-flex min-h-[44px] items-center gap-2 font-semibold underline decoration-2 underline-offset-[6px] transition-colors duration-200;
+    text-decoration-color: var(--red);
+  }
+
+  .text-link:hover {
+    @apply text-plate-red;
+  }
+
+  .on-dark .text-link {
+    text-decoration-color: var(--red-bright);
+  }
+
+  .on-dark .text-link:hover {
+    @apply text-plate-red-bright;
+  }
+}
+
+/* ------------------------------------------------------------------
+   The log page: blue ruled lines and the red margin line
+   ------------------------------------------------------------------ */
+.ruled {
+  background-image: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent calc(var(--rule-gap) - 1px),
+    var(--rule) calc(var(--rule-gap) - 1px),
+    var(--rule) var(--rule-gap)
+  );
+}
+
+/* The margin column sits left of the red line on large screens. On small
+   screens the label sits above the content behind a short red tick. */
+.log-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1024px) {
+  .log-grid {
+    grid-template-columns: 10rem minmax(0, 1fr);
+  }
+
+  .log-content {
+    border-left: 2px solid var(--red);
+    padding-left: 3rem;
+  }
+}
+
+.margin-tick {
+  display: inline-block;
+  width: 1.5rem;
+  height: 2px;
+  background: var(--red);
+  vertical-align: middle;
+}
+
+/* ------------------------------------------------------------------
+   Header
+   ------------------------------------------------------------------ */
+.site-header {
+  background-color: var(--chalk);
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color 250ms ease-out,
+    border-color 250ms ease-out,
+    box-shadow 250ms ease-out;
+}
+
+.site-header.is-scrolled {
+  background-color: var(--chalk-bright);
+  border-bottom-color: var(--chalk-line);
+  box-shadow: 0 1px 0 rgba(21, 23, 26, 0.04);
+}
+
+.nav-link {
+  @apply relative inline-flex min-h-[44px] items-center whitespace-nowrap text-base font-semibold leading-none text-iron;
+  font-stretch: 112%;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  height: 3px;
+  background: var(--red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.nav-link:hover::after,
+.nav-link[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+/* Body scroll lock while the mobile menu is open */
+body.menu-open {
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------
+   The hero lockup: STRENGTH is the load on the bar.
+   Sized in container query units so the lockup fits its column exactly
+   at every width.
+   ------------------------------------------------------------------ */
+.lockup {
+  container-type: inline-size;
+}
+
+.lockup-will {
+  font-size: 19cqw;
+  line-height: 0.82;
+  color: var(--chalk);
+  -webkit-text-stroke: max(1.5px, 0.3cqw) var(--iron);
+}
+
+.lockup-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9cqw;
+  margin-top: 1.4cqw;
+}
+
+/* The bar itself, edge to edge behind the plates and the word */
+.lockup-bar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: max(3px, 0.85cqw);
+  transform: translateY(-50%);
+  background: var(--iron);
+}
+
+.lockup-strength {
+  position: relative;
+  font-size: 10.8cqw;
+  line-height: 0.8;
+  padding: 0.06em 0.8cqw 0;
+  white-space: nowrap;
+  /* The word is the grip: the bar stops at its edges instead of striking
+     through it */
+  background: var(--chalk);
+}
+
+.plates {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.45cqw;
+}
+
+.plates-left {
+  flex-direction: row-reverse;
+  margin-left: 1.5cqw;
+}
+
+.plates-right {
+  margin-right: 1.5cqw;
+}
+
+/* Competition plates share one diameter; weight shows in thickness */
+.plate {
+  display: block;
+  height: 15cqw;
+  border-radius: max(2px, 0.35cqw);
+}
+
+.plate-red {
+  width: 2.7cqw;
+  background: var(--red);
+}
+
+.plate-blue {
+  width: 2.1cqw;
+  background: var(--blue);
+}
+
+.collar {
+  display: block;
+  width: 1.1cqw;
+  height: 4.2cqw;
+  border-radius: 1px;
+  background: var(--iron);
+}
+
+.lockup-training {
+  margin-top: 1.6cqw;
+  display: flex;
+  align-items: center;
+  gap: 2cqw;
+  font-size: max(0.8125rem, 2.35cqw);
+  letter-spacing: 0.42em;
+}
+
+.lockup-training::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--iron);
+}
+
+/* ------------------------------------------------------------------
+   The plate face (About): the name runs round the rim like cast lettering
+   ------------------------------------------------------------------ */
+.plate-face text {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+}
+
+/* ------------------------------------------------------------------
+   Motion 1: scroll reveals
+   Hidden state exists only under html.js (set by an inline script before
+   paint), so content is visible without JavaScript and when printed.
+   ------------------------------------------------------------------ */
+html.js .reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 550ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 550ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* Fade only: for anything that is, or wraps, a hash target */
+html.js .reveal.reveal-fade {
+  transform: none;
+}
+
+html.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ------------------------------------------------------------------
+   Motion 2: log rows are ruled in as they arrive. The row's top rule
+   draws left to right, then the entry fades up. Gate elements never
+   animate themselves; they only carry is-visible for their children.
+   ------------------------------------------------------------------ */
+.log-row {
+  position: relative;
+}
+
+.log-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--iron);
+  transform-origin: left;
+}
+
+.on-dark .log-row::before {
+  background: var(--steel);
+}
+
+html.js .reveal-gate .log-row::before {
+  transform: scaleX(0);
+  transition: transform 650ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--row-delay, 0ms);
+}
+
+html.js .reveal-gate .log-entry {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 450ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 450ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: calc(var(--row-delay, 0ms) + 150ms);
+}
+
+html.js .reveal-gate.is-visible .log-row::before {
+  transform: scaleX(1);
+}
+
+html.js .reveal-gate.is-visible .log-entry {
+  opacity: 1;
+  transform: none;
+}
+
+/* ------------------------------------------------------------------
+   Motion 3 (the signature): the bar is loaded once on page load.
+   Red goes on first (the heaviest plate sits innermost), then blue,
+   then the collars. Pure CSS: it needs no JavaScript, and the plates are
+   never hidden when animation is off.
+   ------------------------------------------------------------------ */
+@keyframes load-left {
+  from {
+    opacity: 0;
+    transform: translateX(-3cqw);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes load-right {
+  from {
+    opacity: 0;
+    transform: translateX(3cqw);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .plates-left > * {
+    animation: load-left 520ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .plates-right > * {
+    animation: load-right 520ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .plates .plate-red {
+    animation-delay: 120ms;
+  }
+
+  .plates .plate-blue {
+    animation-delay: 260ms;
+  }
+
+  .plates .collar {
+    animation-delay: 400ms;
+  }
+
+  .rise {
+    animation: rise 600ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: var(--rise-delay, 0ms);
+  }
+}
+
+/* Reduced motion and print: every hidden state above is repeated here at
+   equal or higher specificity, later in the file, so nothing stays hidden. */
+@media (prefers-reduced-motion: reduce) {
+  html.js .reveal,
+  html.js .reveal.reveal-fade,
+  html.js .reveal.is-visible,
+  html.js .reveal-gate .log-row::before,
+  html.js .reveal-gate .log-entry,
+  html.js .reveal-gate.is-visible .log-row::before,
+  html.js .reveal-gate.is-visible .log-entry {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .nav-link::after {
+    transition: none;
+  }
+}
+
+@media print {
+  html.js .reveal,
+  html.js .reveal.reveal-fade,
+  html.js .reveal.is-visible,
+  html.js .reveal-gate .log-row::before,
+  html.js .reveal-gate .log-entry,
+  html.js .reveal-gate.is-visible .log-row::before,
+  html.js .reveal-gate.is-visible .log-entry {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .plates > *,
+  .rise {
+    animation: none;
+  }
 }
