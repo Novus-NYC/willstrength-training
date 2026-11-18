@@ -4,7 +4,7 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: `Page not found | ${site.name}`,
-  description: `That page is not on the ${site.name} site. Head back to the home page, the session options or the Contact page.`,
+  description: `That page is not on the ${site.name} site. Head back to the home page, or try Services or Contact.`,
 };
 
 /**
@@ -34,7 +34,7 @@ export default function NotFound() {
               Back to home
             </Link>
             <Link href="/services" className="btn-secondary">
-              Session options
+              Services
             </Link>
             <Link href="/contact" className="btn-secondary">
               Contact

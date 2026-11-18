@@ -5,8 +5,9 @@ import { inquiryLink } from "@/lib/site";
 
 /**
  * The closing call to action on Home, About and Services. With an inquiry
- * channel set it shows the inquiry button. Until then it says plainly that
- * inquiries open soon and points to the Contact page, never a dead button.
+ * channel set (site.inquiry or a contact detail) it shows the inquiry button.
+ * Until then it says plainly that inquiries open soon and links to the
+ * Contact page, never a dead button.
  */
 export function AskBand() {
   const link = inquiryLink();
@@ -34,7 +35,7 @@ export function AskBand() {
             <>
               <p className="text-lead font-semibold">Inquiries open soon.</p>
               <p className="measure-narrow mt-2 text-graphite">
-                The way to ask about sessions is being set up. The Contact page has the latest.
+                The way to ask about sessions is being set up.
               </p>
               <Link href="/contact" className="btn-secondary mt-5">
                 Go to Contact

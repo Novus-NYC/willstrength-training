@@ -8,7 +8,8 @@
  * be empty. Fill the fields below with details the owner sends and the
  * matching sections light up. OWNER-CHECKLIST.md lists every field.
  *
- * Do not deploy publicly until at least `inquiry` and `owner.name` are set.
+ * Do not deploy publicly until at least an inquiry channel (`inquiry`, or a
+ * contact detail) and `owner.name` are set.
  */
 
 /* ------------------------------------------------------------------
@@ -85,8 +86,10 @@ export type Instagram = {
 
 /**
  * The one way to ask about sessions: the site's inquiry button. Set exactly
- * one of these, and the header, hero, Contact page and closing call to action
- * all switch to it. Examples:
+ * one of these, and the header, hero, Contact page, footer and closing call
+ * to action all switch to it. If it stays null, the first contact detail that
+ * is filled in takes its place (booking link, then email, then phone, then
+ * Instagram; see `activeInquiry` below). Examples:
  *   { method: "email", address: "hello@example.com" }
  *   { method: "phone", phone: { display: "(212) 555-0100", e164: "+12125550100" } }
  *   { method: "instagram", instagram: { handle: "@example", url: "https://www.instagram.com/example/" } }
@@ -155,7 +158,10 @@ export const site: SiteConfig = {
 
   hours: null,
 
-  /** Null: the Contact page shows "Inquiries open soon" and the header CTA hides */
+  /**
+   * Null, and so is every contact detail: the Contact page shows
+   * "Inquiries open soon" and the header CTA hides.
+   */
   inquiry: null,
 
   sessionPhotos: [],
@@ -166,14 +172,56 @@ export const site: SiteConfig = {
    ------------------------------------------------------------------ */
 
 /**
- * True until the two launch-blocking facts are in: a way to ask about
- * sessions and the owner's name. While true, robots.txt asks search engines
- * not to crawl the site, in case it is deployed early by mistake.
+ * The first contact detail that can serve as the inquiry button, in order:
+ * booking link, email, phone, Instagram. Null while none is set.
  */
-export const isScaffold = site.inquiry === null || site.owner.name === null;
+function firstChannel(contact: SiteConfig["contact"]): Inquiry | null {
+  if (contact.bookingUrl) return { method: "booking", url: contact.bookingUrl, provider: null };
+  if (contact.email) return { method: "email", address: contact.email };
+  if (contact.phone) return { method: "phone", phone: contact.phone };
+  if (contact.instagram) return { method: "instagram", instagram: contact.instagram };
+  return null;
+}
+
+/**
+ * The one inquiry channel the whole site uses: `site.inquiry` when it is set,
+ * otherwise the first contact detail filled in. Every inquiry button, the
+ * Contact status and the footer read this, so the site never says
+ * "inquiries open soon" above a working phone number or email.
+ */
+export const activeInquiry: Inquiry | null = site.inquiry ?? firstChannel(site.contact);
+
+/** True when a contact detail is the active inquiry channel, so Contact can skip repeating it */
+export function isInquiryChannel(detail: keyof SiteConfig["contact"]): boolean {
+  if (!activeInquiry) return false;
+  const { contact } = site;
+  switch (detail) {
+    case "bookingUrl":
+      return activeInquiry.method === "booking" && activeInquiry.url === contact.bookingUrl;
+    case "email":
+      return activeInquiry.method === "email" && activeInquiry.address === contact.email;
+    case "phone":
+      return activeInquiry.method === "phone" && activeInquiry.phone.e164 === contact.phone?.e164;
+    case "instagram":
+      return activeInquiry.method === "instagram" && activeInquiry.instagram.url === contact.instagram?.url;
+  }
+}
+
+/**
+ * True until the two launch-blocking facts are in: a way to ask about
+ * sessions and the owner's name. While true, every page sends noindex, in
+ * case the site is deployed early by mistake.
+ */
+export const isScaffold = activeInquiry === null || site.owner.name === null;
 
 /** What the business does, in the only words the brief supports */
 export const category = "Strength training sessions";
+
+/** The same, for use inside a sentence: "strength training sessions" */
+export const categoryPhrase = category.toLowerCase();
+
+/** Section label for the owner: "The trainer" from owner.role, or "The coach" until a role is set */
+export const ownerLabel = site.owner.role ? `The ${site.owner.role.toLowerCase()}` : "The coach";
 
 export type InquiryLink = {
   /** Button label, action-specific */
@@ -189,8 +237,8 @@ export type InquiryLink = {
   detail: string | null;
 };
 
-/** Turns the inquiry config into a button. Null while no channel is set. */
-export function inquiryLink(inquiry: Inquiry | null = site.inquiry): InquiryLink | null {
+/** Turns the active inquiry channel into a button. Null while no channel is set. */
+export function inquiryLink(inquiry: Inquiry | null = activeInquiry): InquiryLink | null {
   if (!inquiry) return null;
   switch (inquiry.method) {
     case "email":

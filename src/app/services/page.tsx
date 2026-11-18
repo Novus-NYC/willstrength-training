@@ -6,11 +6,16 @@ import { SessionPhotos } from "@/lib/components/photos";
 import { Reveal } from "@/lib/components/reveal";
 import { ServiceLog } from "@/lib/components/service-log";
 import { pageMetadata } from "@/lib/metadata";
-import { site } from "@/lib/site";
+import { category, site } from "@/lib/site";
+
+/** The copy only promises a list once site.services has entries */
+const hasServices = site.services.length > 0;
 
 export const metadata = pageMetadata({
   title: "Services",
-  description: `Strength training sessions with ${site.name}: the session options, written up one per line.`,
+  description: hasServices
+    ? `${category} with ${site.name}: the session options, written up one per line.`
+    : `${category} with ${site.name}. The session options will be listed here once they are confirmed.`,
   path: "/services",
 });
 
@@ -31,13 +36,17 @@ export default function ServicesPage() {
               Services
             </p>
           </div>
-          <div className="log-content grid gap-10 pb-14 pt-5 md:grid-cols-12 md:items-end md:pb-20 lg:pt-16">
+          {/* Top-aligned below lg, where the label sits in its own row above
+              the title; bottom-aligned once it moves into the margin. */}
+          <div className="log-content grid gap-10 pb-14 pt-5 md:grid-cols-12 md:items-start md:pb-20 lg:items-end lg:pt-16">
             <div className="md:col-span-7">
               <h1 id="services-heading" className="rise display text-display-lg">
                 Training sessions
               </h1>
               <p className="rise measure-narrow mt-6 text-lead" style={{ "--rise-delay": "120ms" } as CSSProperties}>
-                Every session option at {site.name}, written up one per line.
+                {hasServices
+                  ? `Every session option at ${site.name}, written up one per line.`
+                  : "Session options will be written up here, one per line, once they are confirmed."}
               </p>
             </div>
             {/* Decorative: a blank log page with numbered, ruled lines and a
@@ -64,7 +73,7 @@ export default function ServicesPage() {
         <h2 id="options-heading" className="sr-only">
           Session options
         </h2>
-        {services.length > 0 ? (
+        {hasServices ? (
           <ServiceLog services={services} />
         ) : (
           <Reveal>

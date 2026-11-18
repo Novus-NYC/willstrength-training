@@ -4,19 +4,26 @@ import { InquiryButton } from "@/lib/components/inquiry";
 import { LogSection } from "@/lib/components/log-section";
 import { Reveal } from "@/lib/components/reveal";
 import { pageMetadata } from "@/lib/metadata";
-import { inquiryLink, site, whereLine } from "@/lib/site";
+import { categoryPhrase, inquiryLink, isInquiryChannel, site, whereLine } from "@/lib/site";
 
 export const metadata = pageMetadata({
   title: "Contact",
-  description: `How to ask about a strength training session with ${site.name}.`,
+  description: `How to ask about ${categoryPhrase} with ${site.name}.`,
   path: "/contact",
 });
 
 export default function ContactPage() {
   const link = inquiryLink();
-  const { phone, email, instagram, bookingUrl } = site.contact;
+  const { contact } = site;
+  // The active inquiry channel is already shown in the status block above,
+  // so the details list skips the row that would repeat it.
+  const phone = isInquiryChannel("phone") ? null : contact.phone;
+  const email = isInquiryChannel("email") ? null : contact.email;
+  const instagram = isInquiryChannel("instagram") ? null : contact.instagram;
+  const bookingUrl = isInquiryChannel("bookingUrl") ? null : contact.bookingUrl;
   const where = whereLine();
   const hasDetails = Boolean(phone || email || instagram || bookingUrl || where || site.hours?.length);
+  const hasServices = site.services.length > 0;
 
   return (
     <>
@@ -74,11 +81,13 @@ export default function ContactPage() {
                 </p>
                 <p className="mt-8 font-semibold">In the meantime</p>
                 <ul className="mt-1">
-                  <li>
-                    <Link href="/services" className="text-link">
-                      See session options
-                    </Link>
-                  </li>
+                  {hasServices ? (
+                    <li>
+                      <Link href="/services" className="text-link">
+                        See session options
+                      </Link>
+                    </li>
+                  ) : null}
                   <li>
                     <Link href="/about" className="text-link">
                       About {site.name}
@@ -91,7 +100,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Every verified way to reach the business. Hidden until there is one. */}
+      {/* Every other verified way to reach the business. Hidden until there is one. */}
       {hasDetails ? (
         <LogSection label="Reach" labelledBy="details-heading">
           <Reveal>

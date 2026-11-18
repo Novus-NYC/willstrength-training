@@ -17,8 +17,9 @@ function NewTabArrow() {
 }
 
 /**
- * The inquiry button, built from `site.inquiry`. Renders nothing while no
- * channel is set, so there is never a dead button on the page.
+ * The inquiry button, built from `activeInquiry` (site.inquiry, or the first
+ * contact detail filled in). Renders nothing while no channel is set, so
+ * there is never a dead button on the page.
  */
 export function InquiryButton({ className = "btn-primary", onClick, short = false }: InquiryButtonProps) {
   const link = inquiryLink();

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Wordmark } from "@/lib/components/brand-mark";
 import { InquiryButton } from "@/lib/components/inquiry";
-import { category, navLinks, site, whereLine } from "@/lib/site";
+import { activeInquiry, category, navLinks, site, whereLine } from "@/lib/site";
 
 const FOOTER_LINK =
   "inline-flex min-h-[44px] items-center gap-2 text-chalk underline-offset-4 hover:text-plate-red-bright hover:underline";
@@ -14,7 +14,7 @@ export function Footer() {
   const year = new Date().getFullYear();
   const { phone, email, instagram, bookingUrl } = site.contact;
   const where = whereLine();
-  const hasContact = Boolean(phone || email || instagram || bookingUrl || site.inquiry);
+  const hasContact = Boolean(phone || email || instagram || bookingUrl || activeInquiry);
 
   return (
     <footer className="on-dark border-t border-iron-line bg-iron text-chalk">
@@ -44,7 +44,7 @@ export function Footer() {
           <h2 className="label text-steel">Ask about a session</h2>
           {hasContact ? (
             <ul className="mt-3">
-              {site.inquiry ? (
+              {activeInquiry ? (
                 <li className="mb-3">
                   <InquiryButton className="btn-primary btn-compact" />
                 </li>
@@ -81,12 +81,8 @@ export function Footer() {
               ) : null}
             </ul>
           ) : (
-            <>
-              <p className="mt-3 text-steel">Inquiries open soon.</p>
-              <Link href="/contact" className="text-link">
-                See the Contact page
-              </Link>
-            </>
+            // Contact is already listed under Pages, so no second link here
+            <p className="mt-3 text-steel">Inquiries open soon.</p>
           )}
         </div>
       </div>

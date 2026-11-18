@@ -6,11 +6,11 @@ import { CoachPortrait } from "@/lib/components/photos";
 import { PlateFace } from "@/lib/components/plate-face";
 import { Reveal } from "@/lib/components/reveal";
 import { pageMetadata } from "@/lib/metadata";
-import { site, whereLine, wherePhrase } from "@/lib/site";
+import { categoryPhrase, ownerLabel, site, whereLine, wherePhrase } from "@/lib/site";
 
 export const metadata = pageMetadata({
   title: "About",
-  description: `About ${site.name}, a business offering strength training sessions.`,
+  description: `About ${site.name}, a business offering ${categoryPhrase}.`,
   path: "/about",
 });
 
@@ -32,7 +32,9 @@ export default function AboutPage() {
               About
             </p>
           </div>
-          <div className="log-content grid gap-10 pb-14 pt-5 md:grid-cols-12 md:items-center md:pb-20 lg:pt-16">
+          {/* Top-aligned below lg, where the label sits in its own row above
+              the title; centered on the plate once it moves into the margin. */}
+          <div className="log-content grid gap-10 pb-14 pt-5 md:grid-cols-12 md:items-start md:pb-20 lg:items-center lg:pt-16">
             <div className="fit-box rise md:col-span-7">
               {/* The name never breaks: it is sized to its column instead */}
               <h1 id="about-heading" className="display fit-name">
@@ -40,7 +42,7 @@ export default function AboutPage() {
                 <span className="block whitespace-nowrap">Willstrength</span>
               </h1>
               <p className="measure-narrow mt-6 text-lead">
-                {site.name} offers strength training sessions
+                {site.name} offers {categoryPhrase}
                 {owner.name ? <>, run by {owner.name}</> : null}
                 {wherePhraseText ? <> {wherePhraseText}</> : null}.
               </p>
@@ -61,13 +63,13 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* The coach */}
-      <LogSection label="The coach" labelledBy="coach-heading">
+      {/* The coach (labelled with the owner's own role word once it is set) */}
+      <LogSection label={ownerLabel} labelledBy="coach-heading">
         {hasProfile ? (
           <div className="grid gap-10 md:grid-cols-12">
             <Reveal className="md:col-span-8">
               <h2 id="coach-heading" className="display text-display-lg">
-                {owner.name ?? "The coach"}
+                {owner.name ?? ownerLabel}
               </h2>
               {owner.role ? <p className="label mt-3 text-plate-blue">{owner.role}</p> : null}
               {owner.bio?.map((paragraph) => (
@@ -80,7 +82,7 @@ export default function AboutPage() {
         ) : (
           <Reveal>
             <h2 id="coach-heading" className="sr-only">
-              The coach
+              {ownerLabel}
             </h2>
             <ComingSoon title="Coach profile coming soon." as="h3">
               <p>A full introduction is on its way: who runs the sessions, their background and how they coach.</p>

@@ -8,11 +8,16 @@ import { CoachPortrait, SessionPhotos } from "@/lib/components/photos";
 import { Reveal } from "@/lib/components/reveal";
 import { ServiceLog } from "@/lib/components/service-log";
 import { pageMetadata } from "@/lib/metadata";
-import { category, site, whereLine } from "@/lib/site";
+import { category, categoryPhrase, ownerLabel, site, whereLine } from "@/lib/site";
+
+/** Session options are only promised once site.services has some */
+const hasServices = site.services.length > 0;
 
 export const metadata = pageMetadata({
   title: `${site.name} | ${category}`,
-  description: `${site.name} offers strength training sessions. See the session options, read about the business and find out how to ask about a session.`,
+  description: hasServices
+    ? `${site.name} offers ${categoryPhrase}. See the session options, read about the business and find out how to ask about a session.`
+    : `${site.name} offers ${categoryPhrase}. Read about the business and find out how to ask about a session.`,
   path: "/",
   absoluteTitle: true,
 });
@@ -20,7 +25,11 @@ export const metadata = pageMetadata({
 /** The contents page of the log: where each part of the site lives */
 const CONTENTS = [
   { href: "/about", page: "About", note: `The person behind ${site.name}.` },
-  { href: "/services", page: "Services", note: "The session options, one per line." },
+  {
+    href: "/services",
+    page: "Services",
+    note: hasServices ? "The session options, one per line." : "Session options, once confirmed.",
+  },
   { href: "/contact", page: "Contact", note: "How to ask about a session." },
 ];
 
@@ -43,7 +52,9 @@ export default function HomePage() {
               <BarbellLockup />
             </h1>
 
-            <div className="rise mt-8 grid gap-6 md:mt-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-10" style={{ "--rise-delay": "200ms" } as CSSProperties}>
+            {/* Value line and actions sit side by side only from xl. Below
+                that the buttons' auto column squeezes the value line. */}
+            <div className="rise mt-8 grid gap-6 md:mt-10 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end xl:gap-10" style={{ "--rise-delay": "200ms" } as CSSProperties}>
               <div>
                 <p className="text-[1.375rem] font-semibold leading-snug md:text-[1.625rem]" style={{ fontStretch: "112%" }}>
                   {category}.
@@ -52,9 +63,11 @@ export default function HomePage() {
               </div>
               <div className="grid gap-3 sm:flex sm:flex-wrap">
                 <PrimaryAction />
-                <Link href="/services" className="btn-secondary">
-                  See session options
-                </Link>
+                {hasServices ? (
+                  <Link href="/services" className="btn-secondary">
+                    See session options
+                  </Link>
+                ) : null}
               </div>
             </div>
           </div>
@@ -113,7 +126,7 @@ export default function HomePage() {
 
       {/* The coach, once named. Renders nothing until site.owner.name is set. */}
       {owner.name ? (
-        <LogSection label="The coach" labelledBy="coach-heading">
+        <LogSection label={ownerLabel} labelledBy="coach-heading">
           <div className="grid gap-10 md:grid-cols-12 md:items-start">
             <Reveal className="md:col-span-7">
               <h2 id="coach-heading" className="display text-display-lg">
